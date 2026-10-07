@@ -10,6 +10,40 @@ type RedirectRouteProps = {
   params: Promise<{ slug: string }>;
 };
 
+function redirectPage(destinationUrl: string) {
+  const escapedUrl = destinationUrl
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+  const jsUrl = JSON.stringify(destinationUrl).replaceAll("<", "\\u003c");
+
+  return new NextResponse(
+    `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content="0;url=${escapedUrl}" />
+    <title>Opening link…</title>
+  </head>
+  <body>
+    <p>Opening link… If nothing happens, <a href="${escapedUrl}" rel="noreferrer">tap here</a>.</p>
+    <script>window.location.replace(${jsUrl});</script>
+  </body>
+</html>`,
+    {
+      status: 200,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store",
+        "x-robots-tag": "noindex, nofollow",
+      },
+    }
+  );
+}
+
 export async function GET(request: NextRequest, { params }: RedirectRouteProps) {
   const { slug } = await params;
   const trackedLink = await prisma.trackedLink.findUnique({
@@ -46,5 +80,5 @@ export async function GET(request: NextRequest, { params }: RedirectRouteProps) 
     },
   });
 
-  return NextResponse.redirect(trackedLink.destinationUrl, { status: 302 });
+  return redirectPage(trackedLink.destinationUrl);
 }
