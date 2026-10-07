@@ -84,17 +84,20 @@ export function renderMessageWithTracking({
 
   if (!primaryLink) return rendered;
 
-  const trackedUrl = buildTrackedUrl(primaryLink.slug, baseUrl, recipientToken);
+  // Send the destination URL directly. Instagram's in-app browser can render
+  // intermediary /r/:slug tracking URLs as a blank page, even when the same
+  // redirect works in a normal browser.
+  const directUrl = primaryLink.destinationUrl;
 
   if (/\{link\}/i.test(rendered)) {
-    return rendered.replace(/\{link\}/gi, trackedUrl);
+    return rendered.replace(/\{link\}/gi, directUrl);
   }
 
   if (rendered.includes(primaryLink.destinationUrl)) {
-    rendered = rendered.replaceAll(primaryLink.destinationUrl, trackedUrl);
+    rendered = rendered.replaceAll(primaryLink.destinationUrl, directUrl);
   } else {
     const withoutTrailingSlash = primaryLink.destinationUrl.replace(/\/$/, "");
-    rendered = rendered.replaceAll(withoutTrailingSlash, trackedUrl);
+    rendered = rendered.replaceAll(withoutTrailingSlash, directUrl);
   }
 
   return rendered;
