@@ -46,8 +46,7 @@ import {
 } from "@/lib/billing/usage";
 import { recordWorkerAlert } from "@/lib/ops/worker-health";
 import {
-  buildTrackedUrl,
-  renderMessageWithTracking,
+   renderMessageWithTracking,
   renderMessageWithoutLink,
 } from "@/lib/tracking/message";
 import { TRACKED_LINK_ORDER } from "@/lib/tracking/link-order";
@@ -152,7 +151,7 @@ function buildLinkButtons(
   recipientToken: string
 ): { title: string; url: string }[] {
   return trackedLinks.slice(0, 3).map((link, index) => ({
-    url: buildTrackedUrl(link.slug, undefined, recipientToken),
+    url: link.destinationUrl,
     title:
       (index === 0 ? primaryLabel : link.label) || link.label || "Open link",
   }));
@@ -179,7 +178,7 @@ function buildInlineLinkFallback(
     }) || bodyText;
   const extraUrls = trackedLinks
     .slice(1)
-    .map((link) => buildTrackedUrl(link.slug, undefined, recipientToken));
+    .map((link) => link.destinationUrl);
   return extraUrls.length > 0 ? `${base}\n${extraUrls.join("\n")}` : base;
 }
 
