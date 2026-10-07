@@ -26,7 +26,7 @@ describe("tracked link messages", () => {
     );
   });
 
-  it("renders tracked URLs with username personalization", () => {
+  it("renders direct URLs with username personalization", () => {
     expect(
       renderMessageWithTracking({
         message: "Hey {username}, grab it here: {link}",
@@ -39,7 +39,7 @@ describe("tracked link messages", () => {
         ],
         baseUrl: "https://manychat-alternative.com",
       })
-    ).toBe("Hey Maya, grab it here: https://manychat-alternative.com/r/abc123");
+    ).toBe("Hey Maya, grab it here: https://example.com/guide");
   });
 
   it("can replace a raw destination URL when the placeholder is missing", () => {
@@ -54,7 +54,7 @@ describe("tracked link messages", () => {
         ],
         baseUrl: "https://manychat-alternative.com/",
       })
-    ).toBe("Link: https://manychat-alternative.com/r/abc123");
+    ).toBe("Link: https://example.com/guide");
   });
 
   it("matches normalized root URLs with or without trailing slash", () => {
@@ -72,7 +72,7 @@ describe("tracked link messages", () => {
         ],
         baseUrl: "https://manychat-alternative.com",
       })
-    ).toBe("Link: https://manychat-alternative.com/r/abc123");
+    ).toBe("Link: https://example.com/");
   });
 
   it("builds redirect URLs from a base URL", () => {
@@ -115,7 +115,7 @@ describe("campaign analytics helpers", () => {
 });
 
 describe("per-recipient click tracking", () => {
-  it("adds a recipient token to tracked URLs and messages", () => {
+  it("keeps tracked URL helpers but sends direct destination URLs in messages", () => {
     expect(
       buildTrackedUrl("abc123", "https://manychat-alternative.com", "tok")
     ).toBe("https://manychat-alternative.com/r/abc123?r=tok");
@@ -128,7 +128,7 @@ describe("per-recipient click tracking", () => {
         baseUrl: "https://manychat-alternative.com",
         recipientToken: "tok",
       })
-    ).toBe("Grab it here: https://manychat-alternative.com/r/abc123?r=tok");
+    ).toBe("Grab it here: https://example.com/guide");
   });
 
   it("derives a stable, URL-safe token that hides the recipient ID", () => {
