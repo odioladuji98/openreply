@@ -29,8 +29,22 @@ function redirectPage(destinationUrl: string) {
     <title>Opening link…</title>
   </head>
   <body>
-    <p>Opening link… If nothing happens, <a href="${escapedUrl}" rel="noreferrer">tap here</a>.</p>
-    <script>window.location.replace(${jsUrl});</script>
+    <main style="font-family:Arial,sans-serif;max-width:420px;margin:80px auto;padding:24px;text-align:center">
+      <p id="status">Opening link…</p>
+      <a id="continue" href="${escapedUrl}" rel="noreferrer"
+         style="display:none;padding:14px 20px;background:#111;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">
+        Continue to destination
+      </a>
+    </main>
+    <script>
+      const continueLink = document.getElementById("continue");
+      const status = document.getElementById("status");
+      setTimeout(() => {
+        status.textContent = "If the link did not open automatically, tap below.";
+        continueLink.style.display = "inline-block";
+      }, 1000);
+      window.location.replace(${jsUrl});
+    </script>
   </body>
 </html>`,
     {
